@@ -1,0 +1,81 @@
+% El método falsa posicion se utiliza para encontrar la raíz de una ecuación no lineal en metodos numericos. 
+% Este es un método cerrado porque en cada iteración tenemos que verificar el signo de la función. 
+% Dado que la raíz se encuentra  dentro del intervalo en el dominio, es por eso que también se conoce como método de horquillado. 
+% Este método es más rápido que el método de bisección y más lento que el método de Newton Raphson. 
+% Da la garantía de converger una raíz única. El método de posición falsa requiere dos suposiciones iniciales para iniciar 
+% la solución y no es necesario encontrar la derivada de la función.
+
+%La fórmula del método Regula falsi es x = (af(b)-bf(a))/(b-a)
+
+% Aquí, escribimos el código del Método de posición falsa en MATLAB paso a paso. MATLAB es una manera fácil de resolver problemas 
+% complicados que no se resuelven a mano o que son imposibles de resolver en la página.
+
+
+% método de falsa posición
+% Encuentre una raíz positiva de f (x) = ?
+% La raíz está entre corchetes entre [a, b]
+% c es la estimación inicial calculada a partir de los puntos ayb
+clc, clear, close
+% estimaciones iniciales del gráfico f (x) vs x
+a=0; b=2; 
+%funcion a calcular 
+f=@(x) (x.^7) - (18*(x.^6)) + (132*(x.^5)) - (520*(x.^4)) + (1.280*(x.^3)) - (2.304*(x.^2)) + (3.072*x) - 2.408;  
+% función para encontrar una nueva raíz estimada
+c=b-f(b)*((a-b)/(f(a)-f(b))); 
+ainit=a; binit=b; 
+er=abs(b-a);
+% error tolerable
+tol=1e-6; 
+% contador
+ii=1; 
+%crea un vector para almacenar valores de error para cada iteracion
+ervect=zeros(1,ii); 
+%crea un vector para almacenar el número de iteración en a un momento especifico
+iivect=zeros(1,ii); 
+% titulo tabla
+fprintf('%3s %7s %7s %7s %10s %10s %10s %10s \n','ii','a','b','c','fa','fb','fc','er'); 
+while er>= tol && ii<500
+    fprintf('%3d %7.3f %7.3f %7.3f %10.2e %10.2e %10.2e %10.2e \n',ii,a, b, c, f(a), f(b), f(c), er);
+    % c sustituye a o b
+    if f(a)*f(c)>0 
+        a=c;
+    elseif f(a)*f(c)<0
+        b=c;
+    else
+        root=c;
+        break
+    end
+    c=(a+b)/2;
+    er=abs(b-a);
+    %almacena el valor de error actual
+    ervect(ii)=er; 
+    %almacena el valor de iteración actual
+    iivect(ii)=ii; 
+    ii=ii+1;
+end
+% Entre a, b, c encuentre el más cercano a la raíz:
+if abs(f(b))<abs(f(c)) && abs(f(b))<abs(f(a))
+    root=b;
+elseif abs(f(c))<abs(f(a)) && abs(f(c))<abs(f(b))
+    root=c;
+else
+    root=a
+end
+%crea un vector de coeficientes de f (x) para ser utilizado por la función 'raíces' en la siguiente línea
+coeff=[1 -151 5150 -5000]; 
+%calcula las raíces verdaderas y las pone en un vector llamado roottrue
+roottrue=roots(coeff); 
+%calcula el error entre la raíz verdadera y la raíz calculada; roottrue (x) se refiere a la raíz que se va a comparar en el vector roottrue
+error=abs(roottrue(3)-root); 
+ 
+ 
+fprintf('\n La suposición inicial de a fue %d \n', ainit);
+fprintf(' La suposición inicial para b fue %d \n', binit);
+fprintf('\n El valor calculado de la raíz con el código del método de posición falsa para las suposiciones iniciales es %.3f \n', root);
+fprintf('\n La raíz se encontró en %d iteraciones\n', ii-1);
+fprintf('\n Los verdaderos valores de la raíz son \n');
+%el índice x de roottrue (x) muestra el valor de una de las soluciones
+fprintf('%e \n',roottrue(3)); 
+fprintf('\n La diferencia de error del valor calculado y verdadero es %e',error);
+%traza f (x) con x en el rango de -10 a 120
+fplot (f,[-10,120]); 
